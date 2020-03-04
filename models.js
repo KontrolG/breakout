@@ -94,20 +94,19 @@ class bouncingBall extends Circle {
     
     /* When the ball touched the top of the rectangle. */
     const touchTop =
-      (ballLeftEdge >= otherShape.positionX &&
-      ballRightEdge <= otherShapeRightEdge) &&
+      (ballRightEdge >= otherShape.positionX &&
+      ballLeftEdge <= otherShapeRightEdge) &&
       (ballBottomEdge >= otherShape.positionY) &&
       this.positionY <= otherShape.positionY &&
       this.velocityY >= 0;
 
     /* When the ball touched the bottom of the rectangle. */
     const touchBottom =
-      ballLeftEdge >= otherShape.positionX &&
-      ballRightEdge <= otherShapeRightEdge &&
+      ballRightEdge >= otherShape.positionX &&
+      ballLeftEdge <= otherShapeRightEdge &&
 
       ballTopEdge <= otherShapeBottomEdge &&
       this.positionY >= otherShapeBottomEdge &&
-      
       this.velocityY <= 0;
 
 
@@ -131,8 +130,12 @@ class bouncingBall extends Circle {
       this.positionY <= otherShapeBottomEdge &&
       this.velocityX >= 0;
 
-      if (!(otherShape instanceof PlayerPad) && touchTop || touchBottom || touchRight || touchLeft) {
+      if (ballLeftEdge <= otherShapeRightEdge) {
         debugger;
+      }
+
+      if (!(otherShape instanceof PlayerPad) && touchTop || touchBottom || touchRight || touchLeft) {
+        // debugger;
         otherShape.hitted();
       }
 

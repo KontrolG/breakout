@@ -47,21 +47,21 @@ const loadGame = () => {
   );
 
   state.bouncingBall = new bouncingBall(
-    (canvas.width / 2) - 15,
-    15,
+    canvas.width - 15,
+    (canvas.height / 2),
     "magenta",
     15,
-    0,
-    5
+    -5,
+    0
   );
 
   state.bricks = [
     new Brick(
       canvas.width / 2 + 160,
-      canvas.height / 2 - 30 / 2,
+      canvas.height / 2 - 20 / 2,
       "olive",
       150,
-      30
+      20
     ),
     new Brick(
       canvas.width / 2 - 50 / 2,
@@ -72,10 +72,10 @@ const loadGame = () => {
     ),
     new Brick(
       canvas.width / 2 - 200,
-      canvas.height / 2 - 25 / 2,
+      canvas.height / 2 - 30 / 2,
       "olive",
       150,
-      25
+      30
     )
   ];
 
