@@ -6,10 +6,11 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const canvasContext = canvas.getContext("2d");
 const boomAudio = document.querySelector("audio.boom");
+const liveLostAudio = document.querySelector("audio.liveLost");
 
-const playBoom = () => {
-  boomAudio.currentTime = 0;
-  boomAudio.play();
+const playAudio = audio => {
+  audio.currentTime = 0;
+  audio.play();
 }
 
 const showMessage = (message, marginTop = 0, colorString = "#fff") => {
@@ -31,7 +32,7 @@ const gameOver = () => {
   state.currentState = "gameOver";
   showOverlay();
   showMessage("You lost!", -13, "crimson");
-  showMessage("Click anywhere to restart.", 16);
+  showMessage("Click anywhere to restart", 16);
   cancelAnimationFrame(render);
 }
 
@@ -39,25 +40,33 @@ const gameFinished = () => {
   state.currentState = "gameFinished";
   showOverlay();
   showMessage("You won!", -13, "forestgreen");
-  showMessage("Click anywhere to restart.", 16);
+  showMessage("Click anywhere to restart", 16);
   cancelAnimationFrame(render);
 };
 
 const gamePaused = () => {
     showOverlay();
     showMessage("Game Paused", -13, "orange");
-    showMessage("Click anywhere to continue.", 16);
+    showMessage("Click anywhere to continue", 16);
     cancelAnimationFrame(render);
+}
+
+const drawLives = lives => {
+  for (let index = 1; index <= lives; index++) {
+    canvasContext.drawImage(state.livesImage, 20 * index, 20, 30, 30);
+  }
 }
 
 const render = () => {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-  canvasContext.fillStyle = "rgba(51, 51, 51, 1";
+  canvasContext.fillStyle = "rgba(51, 51, 51, 1)";
   canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-  canvasContext.fillStyle = "rgba(255, 255, 255, 1";
-  canvasContext.fillText(`Lives: ${state.lives}`, 15, 45);
-  canvasContext.fillText(`Bricks: ${state.bricks.length}`, canvas.width - 120, 45);
+  new Rectangle(canvas.width - 95, 35, "skyblue", 75, 15).draw();
+
+  drawLives(state.lives);
+  canvasContext.fillStyle = "rgba(255, 255, 255, 1)";
+  canvasContext.fillText(state.bricks.length, canvas.width - 72.5, 51.5);
 
   state.playerPad.draw(canvasContext);
   state.bouncingBall.draw(canvasContext);
@@ -91,14 +100,14 @@ const loadGame = () => {
   canvasContext.fillRect(0, 0, canvas.width, canvas.height);
   state.currentState = "standBy";
   showOverlay();
-  showMessage("Click anywhere to restart.", -13);
+  showMessage("Click anywhere to start the game", -13);
 
   state.playerPad = new PlayerPad(
     canvas.width / 2 - 150 / 2,
-    canvas.height - 25,
+    canvas.height - 20,
     "blueviolet",
-    150,
-    25
+    100,
+    15
   );
 
   /* initializateGame(); */
@@ -161,9 +170,16 @@ const initializateGame = () => {
   state.lives = 3;
   state.currentState = "playing";
 
-  state.bouncingBall = new bouncingBall(15, 15, "blueviolet", 15, 5, 5);
+  state.livesImage = new Image();
+  state.livesImage.src = "lives.png";
+  state.livesImage.addEventListener("load", function () {
+    canvasContext.drawImage(this, 20, 20, 30, 30);
+  })
 
-  state.bricks = [
+  state.bouncingBall = new bouncingBall(10 + (Math.random() * (canvas.width - 10)), 10, "blueviolet", 10, 5 * (Math.random() > 0.5 ? 1 : -1), 5);
+
+  state.bricks = levelGenerator();
+  /* [
     new Brick(
       canvas.width / 2 + 160,
       canvas.height / 2 - 10 / 2,
@@ -185,7 +201,7 @@ const initializateGame = () => {
       150,
       30
     )
-  ];
+  ]; */
 
   render();
 }
@@ -224,3 +240,33 @@ window.addEventListener("keydown", handleControls);
 window.addEventListener("mousemove", handleMouse);
 canvas.addEventListener("click", handleClick);
 window.addEventListener("load", loadGame);
+
+
+
+
+function levelGenerator() {
+  const columns = 8;
+  const rows = 8;
+  const totalWidth = canvas.width * 0.6;
+  const totalHeight = canvas.height * 0.4;
+  let actualPositionX = (canvas.width - totalWidth) / 2;
+  let actualPositionY = (canvas.height - totalHeight) / 2;
+  const bricksMargins = totalWidth * 0.01;
+  const bricksWidth = (totalWidth / rows) - bricksMargins;
+  const bricksHeight = (totalHeight / columns) - bricksMargins;
+  const bricks = [];
+
+  for (let rowsCount = 1; rowsCount <= rows; rowsCount++) {
+    for (let columnsCount = 1; columnsCount <= columns; columnsCount++) {
+      bricks.push(
+        new Brick(actualPositionX, actualPositionY, "skyblue", bricksWidth, bricksHeight)
+      );
+      actualPositionX += bricksWidth + bricksMargins;  
+    }
+    actualPositionX = (canvas.width - totalWidth) / 2;
+    actualPositionY += bricksHeight + bricksMargins;
+  }
+
+  return bricks;
+}
+

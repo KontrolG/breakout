@@ -18,6 +18,7 @@ class Rectangle extends Shape {
   draw() {
     canvasContext.fillStyle = this.colorString;
     canvasContext.fillRect(this.positionX, this.positionY, this.width, this.height);
+    canvasContext.closePath();
   }
 }
 
@@ -51,6 +52,7 @@ class Circle extends Shape {
     canvasContext.fillStyle = this.colorString;
     canvasContext.arc(this.positionX, this.positionY, this.radius, 0, 180);
     canvasContext.fill();
+    canvasContext.closePath();
   }
 }
 
@@ -62,7 +64,7 @@ class bouncingBall extends Circle {
   }
 
   revertVelocity(axis) {
-    playBoom();
+    playAudio(boomAudio);
     this[`velocity${axis}`] = -this[`velocity${axis}`];
   }
 
@@ -74,13 +76,17 @@ class bouncingBall extends Circle {
   }
 
   update(rightLimit, bottomLimit) {
-    this.updatePosition("X", rightLimit);
-    this.updatePosition("Y", bottomLimit);
-    if (this.positionY + this.radius >= canvas.height) {
+    if (this.positionY + this.radius + this.velocityY >= bottomLimit) {
       state.lives--;
-      this.positionX = 20 /* 1024 / 2 */;
-      this.positionY = 20 /* 489 / 2 */;
-    }
+      playAudio(liveLostAudio);
+      const totalSize = this.radius * 2; 
+      this.positionX = totalSize + (Math.random() * (canvas.width - totalSize));
+      this.positionY = totalSize;
+      this.velocityX = 5 * (Math.random() > 0.5 ? 1 : -1);
+    } else {
+      this.updatePosition("X", rightLimit);
+      this.updatePosition("Y", bottomLimit);
+    }    
   }
 
   // checkCollision(otherShape) {
@@ -199,42 +205,3 @@ class Brick extends Rectangle {
     state.bricks.splice(index, 1);
   }
 }
-
-/* Factory */
-class BricksFactory {
-  constructor(processingBrickFunction) {
-    this.processingBrickFunction = processingBrickFunction;
-    this.brickClass(Brick);
-    // añadir una callback funcion para aplicar transformaciones a los ladrillos?
-  }
-
-  createBrick() {
-    // aplicar transformacion a las opciones
-    const options = this.processingBrickFunction(options);
-    return new this.brickClass(options);
-  }
-}
-/* 
-
-
-function proccesBricks() {
-  // establecer parametros del contenedor de los bloques.
-  // inicializar si no estan definidos.
-  this.cols = y;
-  this.rows = x;
-  this.width
-  this.height
-  this.originX = (canvas.width - this.width) / 2
-  this.originY = (canvas.width - this.width) / 2
-
-  bricksWidth, bricksHeight, bricksMargin;
-
-  // desde donde se creara el nuevo bloque.
-  actualPositionX, actualPositionY
-
-
-  // opciones del nuevo brick para que sea añadido a la lista y se renderize de acuerdo a la fabrica.
-  return options;
-}
-
-*/
