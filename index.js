@@ -24,7 +24,7 @@ const showMessage = (message, marginTop = 0, colorString = "#fff") => {
 }
 
 const showOverlay = () => {
-  canvasContext.fillStyle = "rgba(51, 51, 51, 0.7";
+  canvasContext.fillStyle = "rgba(51, 51, 51, 0.7)";
   canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -154,7 +154,7 @@ const createBouncingBallWithRandomPosition = () => {
 
 const loadLivesImage = () => {
   state.livesImage = new Image();
-  state.livesImage.src = "lives.png";
+  state.livesImage.src = "heart.png";
 }
 
 const initializateGame = () => {
@@ -163,31 +163,51 @@ const initializateGame = () => {
 
   loadLivesImage();
   state.bouncingBall = createBouncingBallWithRandomPosition();
-  state.bricks = levelGenerator(6, 4, canvas.width * 0.6, canvas.height * 0.4);
+  const levelOne = {
+    template: ["  XXXX  ", "YYYYYYYY", "YYYYYYYY", "  XXXX  "],
+    totalWidth: canvas.width * 0.6,
+    totalHeight: canvas.height * 0.4,
+    colors: {
+      X: "brown",
+      Y: "crimson"
+    }
+  };
+  state.bricks = levelGenerator(levelOne);
   render();
 }
 
-function levelGenerator(columns, rows, totalWidth, totalHeight) {
+const levelGenerator = ({ template, totalWidth, totalHeight, colors }) => {
+  const { length: rows } = template;
+  const { length: columns } = template[0];
   let actualPositionX = (canvas.width - totalWidth) / 2;
   let actualPositionY = (canvas.height - totalHeight) / 2;
   const bricksMargins = (totalWidth + totalHeight) * 0.005;
-  const bricksWidth = (totalWidth / columns) - bricksMargins;
-  const bricksHeight = (totalHeight / rows) - bricksMargins;
+  const bricksWidth = totalWidth / columns - bricksMargins;
+  const bricksHeight = totalHeight / rows - bricksMargins;
   const bricks = [];
 
-  for (let rowsCount = 1; rowsCount <= rows; rowsCount++) {
-    for (let columnsCount = 1; columnsCount <= columns; columnsCount++) {
-      bricks.push(
-        new Brick(actualPositionX, actualPositionY, "skyblue", bricksWidth, bricksHeight)
-      );
-      actualPositionX += bricksWidth + bricksMargins;  
+  for (let rowsCount = 0; rowsCount < rows; rowsCount++) {
+    for (let columnsCount = 0; columnsCount < columns; columnsCount++) {
+      const asd = template[rowsCount][columnsCount];
+      if (asd !== " ") {
+        bricks.push(
+          new Brick(
+            actualPositionX,
+            actualPositionY,
+            colors[asd],
+            bricksWidth,
+            bricksHeight
+          )
+        );
+      }
+      actualPositionX += bricksWidth + bricksMargins;
     }
     actualPositionX = (canvas.width - totalWidth) / 2;
     actualPositionY += bricksHeight + bricksMargins;
   }
 
   return bricks;
-}
+};
 
 const continueGame = () => {
   state.currentState = "playing";
