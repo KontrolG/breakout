@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-  <link rel="stylesheet" href="style.css"/>
-  <title>Breakout Game - KontrolG</title>
-</head>
-<body>
-  <canvas class="mainCanvas">
-    <p>Your browser doesn't support a fundamental component to play this game :(</p>
-  </canvas>
-  <audio src="boom.mp3" class="boom"></audio>
-  <audio src="liveLost.mp3" class="liveLost"></audio>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="author" content="German Solano" />
+    <meta
+      name="description"
+      content="Juego de Breakout realizado con el Canvas API"
+    />
+    <meta property="og:title" content="Breakout Game" />
+    <meta
+      property="og:description"
+      content="Juego de Breakout realizado con el Canvas API"
+    />
+    <meta property="og:url" content="https://kontrolg.github.io/breakout" />
+    <meta property="og:image" content="/game-preview.jpg" />
+    <title>Breakout Game</title>
+  </head>
+  <body>
+    <canvas class="mainCanvas">
+      <p>
+        Your browser doesn't support a fundamental component to play this game
+        :(
+      </p>
+    </canvas>
+    <audio src="boom.mp3" class="boom"></audio>
+    <audio src="liveLost.mp3" class="liveLost"></audio>
 
-  <script src="models.js"></script>
-  <script src="index.js"></script>
-</body>
+    <script src="models.js"></script>
+    <script src="index.js"></script>
+  </body>
 </html>
